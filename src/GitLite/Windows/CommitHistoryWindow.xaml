@@ -1,0 +1,41 @@
+﻿<Window x:Class="GitLite.Windows.CommitHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:diffplex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
+        xmlns:data="clr-namespace:GitLite.Repositories.Data"
+        mc:Ignorable="d"
+        Title="Commit history" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="0.5*" />
+        </Grid.ColumnDefinitions>
+        <DockPanel Dock="left">
+            <ListView Name ="ListChanges" SelectionChanged="ListChanges_OnSelectionChanged" SelectionMode="Single">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Message" DisplayMemberBinding="{Binding Message}"/>
+                        <GridViewColumn Header="Author">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate DataType="data:CommitHistoryItem">
+                                    <Grid>
+                                        <Image Width="20" Height="20" Source="{Binding Gravatar}" HorizontalAlignment="left" />
+                                        <TextBlock Margin="25,0,0,0" Text="{Binding Author}" HorizontalAlignment="left"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Date" Width="100" DisplayMemberBinding="{Binding Date}"/>
+                        <GridViewColumn Header="Id" Width="100" DisplayMemberBinding="{Binding Id}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
+        <DockPanel Grid.Column="1" Dock="right">
+            <diffplex:DiffViewer Name="DiffViewer" IsSideBySide="False" Margin="10,10,10,10" ScrollViewer.VerticalScrollBarVisibility="auto" FontSize="10" Foreground="DarkSlateGray">
+            </diffplex:DiffViewer>
+        </DockPanel>
+    </Grid>
+</Window>

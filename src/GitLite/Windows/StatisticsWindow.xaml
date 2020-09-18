@@ -1,0 +1,80 @@
+﻿<Window x:Class="GitLite.Windows.Statistics"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        mc:Ignorable="d"
+        Title="Statistics" Height="450" Width="800">
+    <Grid>
+        <Grid>
+            <DockPanel Name="LoaderPanel" Visibility="Collapsed">
+                <Label Content="loading..." HorizontalAlignment="Center"/>
+            </DockPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
+                <DockPanel Name="ChartView" Visibility="Collapsed">
+                    <StackPanel DockPanel.Dock="Top" >
+                        <StackPanel Name="FilterPanel" DockPanel.Dock="Top" >
+                            <Label Content="Filters" FontSize="16" />
+
+                            <Label Content="From date:" FontSize="10" />
+                            <DatePicker Name="FromDatePicker" SelectedDateChanged="FromDatePicker_OnSelectedDateChanged" />
+                            <Label Content="To date:" FontSize="10" />
+                            <DatePicker Name="ToDatePicker" SelectedDateChanged="ToDatePicker_OnSelectedDateChanged" />
+                            <Label Content="Author:" FontSize="10" />
+                            <ComboBox x:Name="CmbAuthors" SelectionChanged="CmbAuthors_OnSelectionChanged" />
+                            <Label Content="Filters" FontSize="10" />
+                            <CheckBox x:Name="ChangedFilesCheckbox" Click="ChangedFilesCheckbox_OnClick" Content="Calculate changed files"></CheckBox>
+                            <CheckBox x:Name="ChangedLinesCheckbox" Click="ChangedLinesCheckbox_OnClick" Content="Calculate changed lines (slow)"></CheckBox>
+                        </StackPanel>
+                        <StackPanel Name="AuthorPanel">
+                            <Label Content="Commits by author" FontSize="16" />
+                            <lvc:PieChart Name="ByAuthor" LegendLocation="Bottom" Width="400" Height="400" Hoverable="True"/>
+
+                            <Label Content="Commits by commiter" FontSize="16" />
+                            <lvc:PieChart Name="ByCommiter" LegendLocation="Bottom" Width="400" Height="400" Hoverable="True"/>
+
+                            <StackPanel Name="ByFileAuthorPanel">
+                                <Label Content="Commits by files" FontSize="16" />
+                                <lvc:PieChart Name="ByFilesAuthor" LegendLocation="Bottom" Width="400" Height="400" Hoverable="True"/>
+
+                                <Label Content="Commits by added files" FontSize="16" />
+                                <lvc:PieChart Name="ByAddedFilesAuthor" LegendLocation="Bottom" Width="400" Height="400" Hoverable="True"/>
+
+                                <Label Content="Commits by deleted files" FontSize="16" />
+                                <lvc:PieChart Name="ByDeletedFilesAuthor" LegendLocation="Bottom" Width="400" Height="400" Hoverable="True"/>
+                            </StackPanel>
+
+                            <StackPanel Name="ByLineAuthorPanel">
+                                <Label Content="Commits by added lines" FontSize="16" />
+                                <lvc:PieChart Name="ByAddedLinesAuthor" LegendLocation="Bottom" Width="400" Height="400" Hoverable="True"/>
+
+                                <Label Content="Commits by deleted lines" FontSize="16" />
+                                <lvc:PieChart Name="ByDeletedLinesAuthor" LegendLocation="Bottom" Width="400" Height="400" Hoverable="True"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Name="TimePanel">
+                            <Label Content="Commits by month" FontSize="16" />
+                            <lvc:CartesianChart Name="CommitsTime" Width="400" Height="400" LegendLocation="Bottom"/>
+
+                            <StackPanel Name="ByFileTimePanel">
+                                <Label Content="File changes by month" FontSize="16" />
+                                <lvc:CartesianChart Name="FileChangesTime" Width="400" Height="400" LegendLocation="Bottom"/>
+                            </StackPanel>
+                            <StackPanel Name="ByLinesAddedTimePanel">
+                                <Label Content="Lines added by month" FontSize="16" />
+                                <lvc:CartesianChart Name="ByLinesAddedTime" Width="400" Height="400" LegendLocation="Bottom"/>
+                            </StackPanel>
+                            <StackPanel Name="ByLinesRemovedTimePanel">
+                                <Label Content="Lines removed by month" FontSize="16" />
+                                <lvc:CartesianChart Name="ByLinesRemovedTime" Width="400" Height="400" LegendLocation="Bottom"/>
+                            </StackPanel>
+                            <Label Content="Commits by hour" FontSize="16" />
+                            <lvc:CartesianChart Name="CommitsByHour" Width="400" Height="400" LegendLocation="Bottom" />
+                        </StackPanel>
+                    </StackPanel>
+                </DockPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,105 @@
+﻿<Window x:Class="GitLite.Windows.MainWindow"  ContentRendered="MainWindow_OnContentRendered"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:valueConverter="clr-namespace:GitLite.ValueConverter"
+        xmlns:treeView="clr-namespace:GitLite.Component.TreeView"
+        xmlns:userControls="clr-namespace:GitLite.UserControls"
+        mc:Ignorable="d"
+        Title="GitLite">
+    <Window.Resources>
+        <valueConverter:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
+        <valueConverter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <valueConverter:BoolToFontColorConverter x:Key="BoolToFontColorConverter" />
+    </Window.Resources>
+    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Menu>
+                <MenuItem Header="_Repositories">
+                    <MenuItem Name="AddRepositoryMenuItem" Header="_Add" Click="AddRepositoryMenuItem_OnClick" />
+                    <Separator />
+                    <MenuItem Name="FetchRepositoryMenuItem" Header="_Fetch" Click="FetchRepositoryMenuItem_OnClick" />
+                    <MenuItem Name="PullMenuItem"  Header="_Pull" Click="PullMenuItem_OnClick" />
+                    <Separator />
+                    <MenuItem Name="RefreshRepositoryMenuItem" Header="_Refresh" Click="MenuItem_OnClick"/>
+                </MenuItem>
+            </Menu>
+            <ComboBox Visibility="Visible" x:Name="CmbRepositories" HorizontalAlignment="Left" Margin="10,0,10,0" VerticalAlignment="Top" Width="225" SelectionChanged="cmbRepositories_SelectionChanged" />
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Bottom" Name="GitView" Visibility="Visible" Margin="0,40,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.2*" />
+                    <ColumnDefinition Width="0.8*" />
+                </Grid.ColumnDefinitions>
+                <DockPanel Margin="5, 0, 5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <TreeView BorderThickness="0" SelectedItemChanged="lstBranches_SelectedItemChanged" ScrollViewer.HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="LstBranches">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded}" />
+                                <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                <Setter Property="Foreground" Value="{Binding IsTracking, Converter={StaticResource BoolToFontColorConverter}}"></Setter>
+                                <Setter Property="FontWeight" Value="{Binding IsSelected, Converter={StaticResource BoolToFontWeightConverter}}"></Setter>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type treeView:TreeItem}" ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontWeight="Bold" Text="{Binding Name}" />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type treeView:FolderItem}" ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="../Component/Images/folder.png" Margin="0,0,10,0" />
+                                    <TextBlock Text="{Binding Name}" />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                            <DataTemplate DataType="{x:Type treeView:TagTreeItem}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="../Component/Images/tag.png" Margin="0,0,10,0" />
+                                    <TextBlock Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type treeView:BranchTreeItem}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="../Component/Images/branch.png" Width="18" Height="18" Margin="0,0,0,0" />
+                                    <TextBlock ToolTip="{Binding Name}" Text="{Binding Name}">
+                                        <TextBlock.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Name="StatisticsMenuItem"  Header="_Statistics" Click="MenuItemStat_Click" />
+                                                <Separator />
+                                                <MenuItem Name="CreateBranchMenuItem" Header="_Create branch" Click="CreateBranchMenuItem_OnClick" />
+                                                <MenuItem Name="DeleteBranchMenuItem" Header="_Delete branch" Click="DeleteBranchMenuItem_OnClick" />
+                                            </ContextMenu>
+                                        </TextBlock.ContextMenu>
+                                    </TextBlock>
+                                    <TextBlock Text="↑" Visibility="{Binding IsAhead , Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    <TextBlock Text="{Binding AheadBy}" Visibility="{Binding IsAhead , Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    <TextBlock Text="↓" Visibility="{Binding IsBehind , Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    <TextBlock Text="{Binding BehindBy}" Visibility="{Binding IsBehind, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
+                </DockPanel>
+                <GridSplitter Grid.Column="0" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="CurrentAndNext" Margin="3"/>
+                <DockPanel Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5" >
+                    <TabControl SelectedIndex="1" x:Name="ContentTab" DockPanel.Dock="Left" BorderThickness="0" >
+                        <TabControl.ItemContainerStyle>
+                            <Style TargetType="{x:Type TabItem}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </Style>
+                        </TabControl.ItemContainerStyle>
+                        <TabItem>
+                            <userControls:LocalChangesView x:Name="LocalChangesContentControl"></userControls:LocalChangesView>
+                        </TabItem>
+                        <TabItem>
+                            <userControls:CommitView x:Name="CommitContentControl"></userControls:CommitView>
+                        </TabItem>
+                    </TabControl>
+                </DockPanel>
+            </Grid>
+        </DockPanel>
+    </DockPanel>
+</Window>
